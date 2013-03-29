@@ -34,8 +34,9 @@
     };
   };
   out$.IV = IV = {
-    init: function(urls){
+    init: function(urls, index){
       var x0$, res$, i$, len$, url;
+      this.index = index;
       x0$ = IV.overlay = $('#iv');
       x0$.on('mousewheel', IV.wheel);
       x0$.on('mousedown', IV.dragstart);
@@ -46,7 +47,6 @@
         res$.push((fn$.call(this, url)));
       }
       IV.imgs = res$;
-      IV.index = 0;
       IV.img = IV.imgs[IV.index];
       IV.img.$el.on('load', function(){
         IV.overlay.add(this);

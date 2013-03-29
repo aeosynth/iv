@@ -19,7 +19,7 @@ $ = (selector, root=document.body) ->
   el: el
 
 export IV =
-  init: (urls) ->
+  init: (urls, @index) ->
     IV.overlay = $ \#iv
       &on \mousewheel IV.wheel
       &on \mousedown  IV.dragstart
@@ -36,7 +36,6 @@ export IV =
             img{width, height} = @
           img
 
-    IV.index = 0
     IV.img = IV.imgs[IV.index]
     IV.img.$el.on \load ->
       IV.overlay.add @

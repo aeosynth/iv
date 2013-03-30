@@ -79,7 +79,7 @@ IV =
     e.preventDefault!
 
     scale = 1 + (sign * 0.1)
-    {x, y} = e
+    {clientX:x, clientY:y} = e
     {scrollLeft:sx, scrollTop:sy} = IV.overlay.el
     x0 = sx + x
     y0 = sy + y

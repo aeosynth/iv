@@ -16,9 +16,7 @@ $ = (el) ->
   scrollBy: (dx, dy) ->
     el.scrollLeft += dx
     el.scrollTop  += dy
-  scrollTo: (x, y) ->
-    el.scrollLeft = x
-    el.scrollTop  = y
+  scrollTo: (el.scrollLeft, el.scrollTop) ->
   el: el
 
 module.exports = $

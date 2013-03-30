@@ -1,8 +1,6 @@
 $$ = (selector, root=document.body) ->
   nodes = [...root.querySelectorAll selector]
 
-  pluck: (key) ->
-    for node of nodes
-      node[key]
+  pluck: -> for nodes => &[it]
 
 module.exports = $$

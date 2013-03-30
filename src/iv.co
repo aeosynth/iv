@@ -4,8 +4,8 @@ $ = require \$
 
 IV =
   init: (urls, IV.index=0) ->
-    $ "<style>#{IV.css}</style>"
-      .addTo document.head
+    IV.stylesheet = $ "<style>#{IV.css}</style>"
+      &addTo document.head
     IV.overlay = $ '<div id="iv">'
       &on \mousewheel IV.mousewheel # chrome
       &on \wheel      IV.wheel      # fox
@@ -35,6 +35,7 @@ IV =
 
   rm: ->
     IV.overlay.rm!
+    IV.stylesheet.rm!
     $ window
       &off \resize  IV.resize
       &off \keydown IV.keydown
@@ -130,6 +131,7 @@ IV =
   }
 
   #iv {
+    z-index: 999;
     overflow: auto;
     -webkit-user-select: none;
        -moz-user-select: none;

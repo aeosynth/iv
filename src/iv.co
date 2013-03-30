@@ -1,0 +1,159 @@
+log = console~log
+
+$ = require \$
+
+IV =
+  init: (urls, IV.index=0) ->
+    $ "<style>#{IV.css}</style>"
+      .addTo document.head
+    IV.overlay = $ '<div id="iv">'
+      &on \mousewheel IV.mousewheel # chrome
+      &on \wheel      IV.wheel      # fox
+      &on \mousedown  IV.dragstart
+      &on \click      IV.click
+      &addTo document.body
+
+    IV.imgs =
+      for url of urls
+        let
+          el = new Image
+            &src = url
+          $el = $ el
+          img = { el, $el, dirty: false }
+          $el.on \load ->
+            img{width, height} = @
+          img
+
+    IV.img = IV.imgs[IV.index]
+    IV.img.$el.on \load ->
+      IV.overlay.add @
+      IV.resize!
+
+    $ window
+      &on \resize  IV.resize
+      &on \keydown IV.keydown
+
+  rm: ->
+    IV.overlay.rm!
+    $ window
+      &off \resize  IV.resize
+      &off \keydown IV.keydown
+
+  resize: ->
+    {img, overlay} = IV
+    {clientWidth:ow, clientHeight:oh} = overlay.el
+    {width, height} = img
+    if (width > ow) or (height > oh)
+      scale = Math.min (ow / width), (oh / height)
+      img.minWidth = width * scale | 0
+    else
+      img.minWidth = width
+
+    unless img.dirty
+      img.el.width = img.minWidth
+
+  next: -> IV.delta +1
+  prev: -> IV.delta -1
+  delta: ->
+    l = IV.imgs.length
+    IV.index = (<> + it + l) % l # negative modulo
+    {$el} = IV.img
+    IV.img = IV.imgs[IV.index]
+    IV.resize!
+    $el.replace IV.img.el
+
+  keydown: (e) ->
+    switch e.which
+    case 27 # esc
+      IV.rm!
+    case 32 # space
+      if e.shiftKey then IV.prev! else IV.next!
+
+  wheel: (e) ->
+    sign = if e.deltaY < 0 then +1 else -1
+    IV.zoom e, sign
+
+  mousewheel: (e) ->
+    sign = if e.wheelDelta > 0 then +1 else -1
+    IV.zoom e, sign
+
+  zoom: (e, sign) ->
+    e.preventDefault!
+
+    scale = 1 + (sign * 0.1)
+    {x, y} = e
+    {scrollLeft:sx, scrollTop:sy} = IV.overlay.el
+    x0 = sx + x
+    y0 = sy + y
+
+    {img} = IV
+    {el} = img
+    oldWidth = el.width
+    el.width = Math.max Math.min(<> * scale, img.width), img.minWidth
+    scale = el.width / oldWidth
+
+    x1 = x0 * scale - x
+    y1 = y0 * scale - y
+
+    IV.overlay.scrollTo x1, y1
+
+    IV.img
+      &dirty = &el.width !== &minWidth
+
+  click: ({button}) ->
+    return if IV.img.dirty
+    switch button
+    case 0
+      IV.next!
+    case 1
+      IV.prev!
+
+  dragstart: (IV{clientX:x, clientY:y}) ->
+    $ window
+      &on \mousemove IV.dragmove
+      &on \mouseup   IV.dragend
+
+  dragmove: ({clientX:x, clientY:y}) ->
+    IV
+      &overlay.scrollBy IV.x - x, IV.y - y
+      &x = x
+      &y = y
+
+  dragend: ->
+    $ window
+      &off \mousemove IV.dragmove
+      &off \mouseup   IV.dragend
+
+  css: '''
+  body {
+    overflow: hidden;
+  }
+
+  #iv {
+    overflow: auto;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+    display: -webkit-flex;
+    top:    0;
+    left:   0;
+    right:  0;
+    bottom: 0;
+    position: fixed;
+    background-color: black;
+  }
+
+  #iv > img {
+    pointer-events: none;
+    /*
+    * https://developer.mozilla.org/en-US/docs/CSS/Tutorials/Using_CSS_flexible_boxes#Flex_item_considerations
+    * flex items will stay centered, even if they overflow the flex container.
+    * This can sometimes be problematic, however, if they overflow past the top
+    * edge of the page ... as you can't scroll to that area, even if there is
+    * content there!  ... For now, you can instead use margins to achieve
+    * centering
+    */
+    margin: auto;
+  }
+  '''
+
+module.exports = IV.init

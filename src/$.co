@@ -1,0 +1,24 @@
+domify = (html) ->
+  el = document.createElement \div
+    &innerHTML = html
+  el.removeChild el.firstChild
+
+$ = (el) ->
+  if typeof el is \string
+    el = domify el
+
+  on:  (type, cb) -> el.addEventListener    type, cb
+  off: (type, cb) -> el.removeEventListener type, cb
+  rm: -> el.parentNode.removeChild el
+  add:   -> el.appendChild it
+  addTo: -> it.appendChild el
+  replace: -> el.parentNode.replaceChild it, el
+  scrollBy: (dx, dy) ->
+    el.scrollLeft += dx
+    el.scrollTop  += dy
+  scrollTo: (x, y) ->
+    el.scrollLeft = x
+    el.scrollTop  = y
+  el: el
+
+module.exports = $

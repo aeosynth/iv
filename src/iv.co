@@ -13,16 +13,14 @@ IV =
       &on \click      IV.click
       &addTo document.body
 
-    IV.imgs =
-      for url of urls
-        let
-          el = new Image
-            &src = url
-          $el = $ el
-          img = { el, $el, dirty: false }
-          $el.on \load ->
-            img{width, height} = @
-          img
+    IV.imgs = for let url of urls
+      el = new Image
+        &src = url
+      $el = $ el
+      img = { el, $el, dirty: false }
+      $el.on \load ->
+        img{width, height} = @
+      img
 
     IV.img = IV.imgs[IV.index]
     IV.img.$el.on \load ->
@@ -44,11 +42,10 @@ IV =
     {img, overlay} = IV
     {clientWidth:ow, clientHeight:oh} = overlay.el
     {width, height} = img
-    if (width > ow) or (height > oh)
-      scale = Math.min (ow / width), (oh / height)
-      img.minWidth = width * scale | 0
-    else
-      img.minWidth = width
+    img.minWidth = if width > ow or height > oh
+      scale = ow / width <? oh / height
+      width * scale | 0
+    else width
 
     unless img.dirty
       img.el.width = img.minWidth
@@ -90,7 +87,7 @@ IV =
     {img} = IV
     {el} = img
     oldWidth = el.width
-    el.width = Math.max Math.min(<> * scale, img.width), img.minWidth
+    el.width = img.minWidth >? <> * scale <? img.width
     scale = el.width / oldWidth
 
     x1 = x0 * scale - x
@@ -103,11 +100,7 @@ IV =
 
   click: ({button}) ->
     return if IV.img.dirty
-    switch button
-    case 0
-      IV.next!
-    case 1
-      IV.prev!
+    IV<[ next prev ]>[button]!
 
   dragstart: (IV{clientX:x, clientY:y}) ->
     $ window

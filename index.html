@@ -2,29 +2,30 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title></title>
-  <link rel="stylesheet" href="css/index.css">
+  <title>iv</title>
 </head>
 <body>
-  <div id="iv">
+<a id="bookmarklet">bookmarklet</a>
+<script id="script" type="text/app">
+(function(c){function a(b,d){if({}.hasOwnProperty.call(a.cache,b))return a.cache[b];var e=a.resolve(b);if(!e)throw new Error('Failed to resolve module '+b);var c={id:b,require:a,filename:b,exports:{},loaded:!1,parent:d,children:[]};d&&d.children.push(c);var f=b.slice(0,b.lastIndexOf('/')+1);return a.cache[b]=c.exports,e.call(c.exports,c,c.exports,f,b),c.loaded=!0,a.cache[b]=c.exports}var b=function(a){return a='/',{title:'browser',version:'v0.10.1',browser:!0,env:{},argv:[],nextTick:function(a){setTimeout(a,0)},cwd:function(){return a},chdir:function(b){a=b}}}();a.modules={},a.cache={},a.resolve=function(b){return{}.hasOwnProperty.call(a.modules,b)?a.modules[b]:void 0},a.define=function(b,c){a.modules[b]=c},a.define('/bookmarklet.js',function(d,h,i,j){var e,f,c,b,g;e=a('/$$.js',d),f=a('/iv.js',d),c='aeos.iv-alpha.selector',b=localStorage[c]||'',b=prompt('selector',b),localStorage[c]=b,g=e(b).pluck('href'),f(g)}),a.define('/iv.js',function(d,g,h,i){function e(a,b){return function(){return a[b].apply(a,arguments)}}var f,c,b;f=e(console,'log'),c=a('/$.js',d),b={init:function(g,h){function k(f){var e,b,d,a;return e=b=new Image,e.src=f,d=c(b),a={el:b,$el:d,dirty:!1},d.on('load',function(){return a.width=this.width,a.height=this.height,this}),a}var a,f,d,i,j,e;for(b.index=h!=null?h:0,c('<style>'+b.css+'</style>').addTo(document.head),a=b.overlay=c('<div id="iv">'),a.on('mousewheel',b.mousewheel),a.on('wheel',b.wheel),a.on('mousedown',b.dragstart),a.on('click',b.click),a.addTo(document.body),f=[],d=0,i=g.length;d<i;++d)j=g[d],f.push(k.call(this,j));return b.imgs=f,b.img=b.imgs[b.index],b.img.$el.on('load',function(){return b.overlay.add(this),b.resize()}),e=c(window),e.on('resize',b.resize),e.on('keydown',b.keydown),e},rm:function(){var a;return b.overlay.rm(),a=c(window),a.off('resize',b.resize),a.off('keydown',b.keydown),a},resize:function(){var a,h,d,e,f,c,g,i;return a=b.img,h=b.overlay,d=h.el,e=d.clientWidth,f=d.clientHeight,c=a.width,g=a.height,c>e||g>f?(i=Math.min(e/c,f/g),a.minWidth=c*i|0):a.minWidth=c,a.dirty?void 0:a.el.width=a.minWidth},next:function(){return b.delta(1)},prev:function(){return b.delta(-1)},delta:function(d){var a,c;return a=b.imgs.length,b.index=(b.index+d+a)%a,c=b.img.$el,b.img=b.imgs[b.index],b.resize(),c.replace(b.img.el)},keydown:function(a){switch(a.which){case 27:return b.rm();case 32:return a.shiftKey?b.prev():b.next()}},wheel:function(a){var c;return c=a.deltaY<0?1:-1,b.zoom(a,c)},mousewheel:function(a){var c;return c=a.wheelDelta>0?1:-1,b.zoom(a,c)},zoom:function(i,q){var c,f,g,h,n,j,k,l,e,d,o,p,m,a;return i.preventDefault(),c=1+q*.1,f=i.x,g=i.y,h=b.overlay.el,n=h.scrollLeft,j=h.scrollTop,k=n+f,l=j+g,e=b.img,d=e.el,o=d.width,d.width=Math.max(Math.min(d.width*c,e.width),e.minWidth),c=d.width/o,p=k*c-f,m=l*c-g,b.overlay.scrollTo(p,m),a=b.img,a.dirty=a.el.width!==a.minWidth,a},click:function(c){var a;if(a=c.button,b.img.dirty)return;switch(a){case 0:return b.next();case 1:return b.prev()}},dragstart:function(d){var a;return b.x=d.clientX,b.y=d.clientY,a=c(window),a.on('mousemove',b.dragmove),a.on('mouseup',b.dragend),a},dragmove:function(e){var c,d,a;return c=e.clientX,d=e.clientY,a=b,a.overlay.scrollBy(b.x-c,b.y-d),a.x=c,a.y=d,a},dragend:function(){var a;return a=c(window),a.off('mousemove',b.dragmove),a.off('mouseup',b.dragend),a},css:"body {\n  overflow: hidden;\n}\n\n#iv {\n  overflow: auto;\n  -webkit-user-select: none;\n     -moz-user-select: none;\n  display: -webkit-flex;\n  top:    0;\n  left:   0;\n  right:  0;\n  bottom: 0;\n  position: fixed;\n  background-color: black;\n}\n\n#iv > img {\n  pointer-events: none;\n  /*\n  * https://developer.mozilla.org/en-US/docs/CSS/Tutorials/Using_CSS_flexible_boxes#Flex_item_considerations\n  * flex items will stay centered, even if they overflow the flex container.\n  * This can sometimes be problematic, however, if they overflow past the top\n  * edge of the page ... as you can't scroll to that area, even if there is\n  * content there!  ... For now, you can instead use margins to achieve\n  * centering\n  */\n  margin: auto;\n}"},d.exports=b.init}),a.define('/$.js',function(c,d,e,f){var a,b;a=function(c){var b,a;return b=a=document.createElement('div'),b.innerHTML=c,a.removeChild(a.firstChild)},b=function(b){return typeof b==='string'&&(b=a(b)),{on:function(a,c){return b.addEventListener(a,c)},off:function(a,c){return b.removeEventListener(a,c)},rm:function(){return b.parentNode.removeChild(b)},add:function(a){return b.appendChild(a)},addTo:function(a){return a.appendChild(b)},replace:function(a){return b.parentNode.replaceChild(a,b)},scrollBy:function(a,c){return b.scrollLeft+=a,b.scrollTop+=c},scrollTo:function(a,c){return b.scrollLeft=a,b.scrollTop=c},el:b}},c.exports=b}),a.define('/$$.js',function(c,d,e,f){var a,b=[].slice;a=function(d,a){var c;return a==null&&(a=document.body),c=b.call(a.querySelectorAll(d)),{pluck:function(g){var a,d,e,f,b=[];for(a=0,e=(d=c).length;a<e;++a)f=d[a],b.push(f[g]);return b}}},c.exports=a}),a('/bookmarklet.js')}.call(this,this))
+</script>
+<script>
+bookmarklet.href = 'javascript:' + script.textContent.trim()
+localStorage['aeos.iv-alpha.selector'] = '#images a'
+</script>
+  <div id="images">
+    <a href="img/00-title.png"     >1</a>
+    <a href="img/01-stop.png"      >2</a>
+    <a href="img/02-intro.png"     >3</a>
+    <a href="img/03-machine.png"   >4</a>
+    <a href="img/04-install.png"   >5</a>
+    <a href="img/05-wizard.png"    >6</a>
+    <a href="img/06-reading.png"   >7</a>
+    <a href="img/07-no.png"        >8</a>
+    <a href="img/08-sexy.png"      >9</a>
+    <a href="img/09-graphical.png">10</a>
+    <a href="img/10-login.png"    >11</a>
+    <a href="img/11-end.png"      >12</a>
   </div>
-  <script src="js/iv.js"></script>
-  <script>
-  var images = [
-    'img/00-title.png',
-    'img/01-stop.png',
-    'img/02-intro.png',
-    'img/03-machine.png',
-    'img/04-install.png',
-    'img/05-wizard.png',
-    'img/06-reading.png',
-    'img/07-no.png',
-    'img/08-sexy.png',
-    'img/09-graphical.png',
-    'img/10-login.png',
-    'img/11-end.png'
-  ]
-  IV.init(images, 0)
-  </script>
 </body>
 </html>

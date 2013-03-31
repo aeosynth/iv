@@ -46,16 +46,35 @@ IV =
     'J S': -> scrollBy 0, +el.clientHeight
     'K W': -> scrollBy 0, -el.clientHeight
     'L D': -> scrollBy +el.clientHeight, 0
+    T: -> IV.slideDelayBump -1e3
+    e: IV.slideToggle
     'h a': -> scrollBy -50   0
     'j s': -> scrollBy   0 +50
     'k w': -> scrollBy   0 -50
     'l d': -> scrollBy +50   0
+    t: -> IV.slideDelayBump +1e3
+
+  slideDelay: 3e3
+
+  slideDelayBump: (dd) ->
+    return unless IV.slideActive
+    clearInterval IV.slideIntervalId
+    IV.slideDelay += dd
+    IV.slideIntervalId = setInterval IV.next, IV.slideDelay
+
+  slideToggle: ->
+    if ! = IV.slideActive
+      IV.slideIntervalId = setInterval IV.next, IV.slideDelay
+    else
+      clearInterval IV.slideIntervalId
 
   rm: ->
     IV.overlay.rm!
     IV.stylesheet.rm!
     $ window .off \resize  IV.resize
     keybind.rm!
+    if IV.slideActive
+      clearInterval IV.slideIntervalId
 
   resize: ->
     {img, overlay} = IV

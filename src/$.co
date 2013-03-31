@@ -20,6 +20,7 @@ $ = (el) ->
   text:~
     ->        el.textContent
     (text) -> el.textContent = text
+  toggle: -> el.style.display = if it then null else \none
   el: el
 
 module.exports = $

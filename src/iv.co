@@ -4,6 +4,13 @@ $ = require \$
 keybind = require \keybind
 doc = document.documentElement
 
+observe = (obj, key, cb) ->
+  obj import "#key":~
+    -> obj["_#key"]
+    (val) ->
+      obj["_#key"] = val
+      cb val
+
 IV =
   init: (urls, index=0) ->
     IV.stylesheet = $ "<style>#{IV.css}</style>"
@@ -14,7 +21,10 @@ IV =
       &on \mousedown  IV.dragstart
       &on \click      IV.click
       &addTo document.body
-    IV.meta = $ '<div id="meta">wut</div>'
+    IV.meta = $ '<ul id="iv-meta">
+        <li></li>
+        <li></li>
+      </ul>'
       &addTo IV.overlay.el
 
     IV.imgs = for let url of urls
@@ -27,7 +37,12 @@ IV =
       img
 
     # set it after defining IV{meta, imgs}
+    observe IV, \index       IV.obsIndex
+    observe IV, \slideDelay  IV.obsDelay
+    observe IV, \slideActive IV.obsActive
     IV.index = index
+    IV.slideDelay = 3e3
+    IV.slideActive = false
 
     IV.img = IV.imgs[IV.index]
     IV.img.$el.on \load ->
@@ -38,11 +53,9 @@ IV =
 
     keybind IV.keybinds!
 
-  index:~
-    -> IV._index
-    (i) ->
-      IV._index = i
-      IV.meta.text = "#{i + 1}/#{IV.imgs.length}"
+  obsIndex: -> IV.meta.el.children[0].textContent = "#{it+1}/#{IV.imgs.length}"
+  obsDelay: -> IV.meta.el.children[1].textContent = it
+  obsActive: -> $ IV.meta.el.children[1] .toggle it
 
   keybinds: ->
     {scrollTo, scrollBy, el} = IV.overlay
@@ -65,8 +78,6 @@ IV =
     'k w': -> scrollBy   0 -50
     'l d': -> scrollBy +50   0
     t: -> IV.slideDelayBump +1e3
-
-  slideDelay: 3e3
 
   slideDelayBump: (dd) ->
     return unless IV.slideActive
@@ -200,7 +211,10 @@ IV =
     margin: auto;
   }
 
-  #meta {
+  #iv-meta {
+    margin: 0;
+    text-align: right;
+    list-style-type: none;
     position: fixed;
     top: 0;
     right: 0;

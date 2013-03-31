@@ -2,9 +2,10 @@ log = console~log
 
 $ = require \$
 keybind = require \keybind
+doc = document.documentElement
 
 IV =
-  init: (urls, IV.index=0) ->
+  init: (urls, index=0) ->
     IV.stylesheet = $ "<style>#{IV.css}</style>"
       &addTo document.head
     IV.overlay = $ '<div id="iv">'
@@ -13,6 +14,8 @@ IV =
       &on \mousedown  IV.dragstart
       &on \click      IV.click
       &addTo document.body
+    IV.meta = $ '<div id="meta">wut</div>'
+      &addTo IV.overlay.el
 
     IV.imgs = for let url of urls
       el = new Image
@@ -23,6 +26,9 @@ IV =
         img{width, height} = @
       img
 
+    # set it after defining IV{meta, imgs}
+    IV.index = index
+
     IV.img = IV.imgs[IV.index]
     IV.img.$el.on \load ->
       IV.overlay.add @
@@ -31,6 +37,12 @@ IV =
     $ window .on \resize  IV.resize
 
     keybind IV.keybinds!
+
+  index:~
+    -> IV._index
+    (i) ->
+      IV._index = i
+      IV.meta.text = "#{i + 1}/#{IV.imgs.length}"
 
   keybinds: ->
     {scrollTo, scrollBy, el} = IV.overlay
@@ -77,8 +89,8 @@ IV =
       clearInterval IV.slideIntervalId
 
   resize: ->
-    {img, overlay} = IV
-    {clientWidth:ow, clientHeight:oh} = overlay.el
+    {img} = IV
+    {clientWidth:ow, clientHeight:oh} = doc
     {width, height} = img
     img.minWidth = if width > ow or height > oh
       scale = ow / width <? oh / height
@@ -186,6 +198,16 @@ IV =
     * centering
     */
     margin: auto;
+  }
+
+  #meta {
+    position: fixed;
+    top: 0;
+    right: 0;
+    color: white;
+    font-family: monospace;
+    font-size: 12pt;
+    text-shadow: black 0 0 3px, black 0 0 7px;
   }
   '''
 

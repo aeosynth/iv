@@ -17,6 +17,9 @@ $ = (el) ->
     el.scrollLeft += dx
     el.scrollTop  += dy
   scrollTo: (el.scrollLeft, el.scrollTop) ->
+  text:~
+    ->        el.textContent
+    (text) -> el.textContent = text
   el: el
 
 module.exports = $

@@ -1,0 +1,32 @@
+log = console~log
+
+map =
+  27: \esc
+  32: \space
+
+Kb = (map) ->
+  for str, cb in map
+    for key of str / ' '
+      Kb.map[key] = cb
+  window.addEventListener \keydown Kb.keydown
+
+Kb <<<<
+  rm: -> window.removeEventListener \keydown Kb.keydown
+  map: {}
+  keydown: (e) ->
+    {which:code} = e
+    seq = for <[ alt ctrl meta shift ]>
+      & if e[& + \Key]
+    unless key = map[code]
+      key = String.fromCharCode code
+      if 65 <= code <= 90 # A Z
+        if e.shiftKey
+          seq.pop!
+        else
+          key .= toLowerCase!
+    seq.push key
+    seq .= join \+
+
+    Kb.map[seq]?!
+
+module.exports = Kb

@@ -1,6 +1,7 @@
 log = console~log
 
 $ = require \$
+keybind = require \keybind
 
 IV =
   init: (urls, IV.index=0) ->
@@ -27,16 +28,34 @@ IV =
       IV.overlay.add @
       IV.resize!
 
-    $ window
-      &on \resize  IV.resize
-      &on \keydown IV.keydown
+    $ window .on \resize  IV.resize
+
+    keybind IV.keybinds!
+
+  keybinds: ->
+    {scrollTo, scrollBy, el} = IV.overlay
+
+    esc: IV.rm
+    space: IV.next
+    'shift+space': IV.prev
+    G: -> scrollTo el.scrollLeft, el.scrollHeight
+    g: -> scrollTo el.scrollLeft, 0
+    F: -> IV.zoom -1
+    f: -> IV.zoom +1
+    'H A': -> scrollBy -el.clientHeight, 0
+    'J S': -> scrollBy 0, +el.clientHeight
+    'K W': -> scrollBy 0, -el.clientHeight
+    'L D': -> scrollBy +el.clientHeight, 0
+    'h a': -> scrollBy -50   0
+    'j s': -> scrollBy   0 +50
+    'k w': -> scrollBy   0 -50
+    'l d': -> scrollBy +50   0
 
   rm: ->
     IV.overlay.rm!
     IV.stylesheet.rm!
-    $ window
-      &off \resize  IV.resize
-      &off \keydown IV.keydown
+    $ window .off \resize  IV.resize
+    keybind.rm!
 
   resize: ->
     {img, overlay} = IV
@@ -60,40 +79,40 @@ IV =
     IV.resize!
     $el.replace IV.img.el
 
-  keydown: (e) ->
-    switch e.which
-    case 27 # esc
-      IV.rm!
-    case 32 # space
-      if e.shiftKey then IV.prev! else IV.next!
-
   wheel: (e) ->
     sign = if e.deltaY < 0 then +1 else -1
-    IV.zoom e, sign
+    IV.zoomWheel e, sign
 
   mousewheel: (e) ->
     sign = if e.wheelDelta > 0 then +1 else -1
-    IV.zoom e, sign
+    IV.zoomWheel e, sign
 
-  zoom: (e, sign) ->
+  zoomWheel: (e, sign) ->
     e.preventDefault!
+    {clientX:x, clientY:y} = e
+    IV.zoom sign, x, y
+
+  zoom: (sign, x, y) ->
+    {overlay, img} = IV
+    unless x and y
+      x = overlay.el.clientWidth  / 2
+      y = overlay.el.clientHeight / 2
 
     scale = 1 + (sign * 0.1)
-    {clientX:x, clientY:y} = e
-    {scrollLeft:sx, scrollTop:sy} = IV.overlay.el
+    {scrollLeft:sx, scrollTop:sy} = overlay.el
     x0 = sx + x
     y0 = sy + y
 
-    {img} = IV
     {el} = img
-    oldWidth = el.width
-    el.width = img.minWidth >? <> * scale <? img.width
-    scale = el.width / oldWidth
+
+    width = el.width * scale
+    scale = (img.minWidth >? width <? img.width) / el.width
+    el.width *= scale
 
     x1 = x0 * scale - x
     y1 = y0 * scale - y
 
-    IV.overlay.scrollTo x1, y1
+    overlay.scrollTo x1, y1
 
     IV.img
       &dirty = &el.width !== &minWidth

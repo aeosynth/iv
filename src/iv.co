@@ -4,8 +4,8 @@ $ = require \$
 keybind = require \keybind
 doc = document.documentElement
 
-observe = (obj, key, cb) ->
-  obj import "#key":~
+observe = !(obj, key, cb) ->
+  obj <<< "#key":~
     -> obj["_#key"]
     (val) ->
       obj["_#key"] = val
@@ -57,10 +57,10 @@ IV =
 
     keybind IV.keybinds!
 
-  obsIndex: -> IV.meta.el.children[0].textContent = "#{it+1}/#{IV.imgs.length}"
-  obsDelay: -> IV.meta.el.children[1].textContent = it
-  obsActive: -> $ IV.meta.el.children[1] .toggle it
-  obsContinuous: -> $ IV.meta.el.children[2] .toggle it
+  obsIndex:      -> IV.meta.el.children.0.textContent = "#{it+1}/#{IV.imgs.length}"
+  obsDelay:      -> IV.meta.el.children.1.textContent = it
+  obsActive:     -> IV.meta.el.children.1.hidden = !it
+  obsContinuous: -> IV.meta.el.children.2.hidden = !it
 
   keybinds: ->
     {scrollTo, scrollBy, el} = IV.overlay

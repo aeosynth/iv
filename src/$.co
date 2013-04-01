@@ -18,9 +18,8 @@ $ = (el) ->
     el.scrollTop  += dy
   scrollTo: (el.scrollLeft, el.scrollTop) ->
   text:~
-    ->        el.textContent
-    (text) -> el.textContent = text
-  toggle: -> el.style.display = if it then null else \none
+    -> el.textContent
+    (el.textContent) ->
   el: el
 
 module.exports = $

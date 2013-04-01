@@ -1,7 +1,7 @@
 log = console~log
 
 $ = require \$
-keybind = require \keybind
+K = require \keys
 doc = document.documentElement
 
 observe = !(obj, key, cb) ->
@@ -55,12 +55,22 @@ IV =
 
     $ window .on \resize  IV.resize
 
-    keybind IV.keybinds!
+    for str, cb in IV.keybinds!
+      for key of str / ' '
+        IV.keyMap[key] = cb
+    K IV.keyCB
 
   obsIndex:      -> IV.meta.el.children.0.textContent = "#{it+1}/#{IV.imgs.length}"
   obsDelay:      -> IV.meta.el.children.1.textContent = it
   obsActive:     -> IV.meta.el.children.1.hidden = !it
   obsContinuous: -> IV.meta.el.children.2.hidden = !it
+
+  keyMap: {}
+
+  keyCB: (e) ->
+    if IV.keyMap[e.keys]
+      e.preventDefault!
+      that!
 
   keybinds: ->
     {scrollTo, scrollBy, el} = IV.overlay
@@ -109,7 +119,7 @@ IV =
     IV.overlay.rm!
     IV.stylesheet.rm!
     $ window .off \resize  IV.resize
-    keybind.rm!
+    K.rm!
     if IV.slideActive
       clearInterval IV.slideIntervalId
 

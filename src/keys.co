@@ -1,0 +1,38 @@
+map =
+  8 : \backspace
+  9 : \tab
+  13: \enter
+  27: \esc
+  32: \space
+  37: \left
+  38: \up
+  39: \right
+  40: \down
+
+K = (K.cb, K.el || document) ->
+  # XXX special keys (eg esc, backspace) don't emit `keypress`
+  # `charCode` is 0 except in `keypress`
+  # `keyCode` is not unicode
+  K.el.addEventListener \keydown  K.key
+  K.el.addEventListener \keypress K.key
+
+K <<<<
+  rm: ->
+    K.el.removeEventListener \keydown  K.key
+    K.el.removeEventListener \keypress K.key
+  key: (e) ->
+    {which:code} = e
+    keys = for <[ alt ctrl meta ]>
+      & if e[& + \Key]
+    if e.type is \keypress
+      key = String.fromCharCode code
+    else
+      key = map[code]
+      if e.shiftKey
+        keys.push \shift
+    keys.push key
+
+    e.keys = keys * \+
+    K.cb e
+
+module.exports = K

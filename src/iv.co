@@ -12,7 +12,7 @@ observe = (obj, key, cb) ->
       cb val
 
 IV =
-  init: (urls, index=0) ->
+  init: (urls, {index || 0}={}) ->
     IV.stylesheet = $ "<style>#{IV.css}</style>"
       &addTo document.head
     IV.overlay = $ '<div id="iv">'
@@ -24,6 +24,7 @@ IV =
     IV.meta = $ '<ul id="iv-meta">
         <li></li>
         <li></li>
+        <li>continuous</li>
       </ul>'
       &addTo IV.overlay.el
 
@@ -40,9 +41,11 @@ IV =
     observe IV, \index       IV.obsIndex
     observe IV, \slideDelay  IV.obsDelay
     observe IV, \slideActive IV.obsActive
+    observe IV, \continuous  IV.obsContinuous
     IV.index = index
     IV.slideDelay = 3e3
     IV.slideActive = false
+    IV.continuous = false
 
     IV.img = IV.imgs[IV.index]
     IV.img.$el.on \load ->
@@ -56,13 +59,23 @@ IV =
   obsIndex: -> IV.meta.el.children[0].textContent = "#{it+1}/#{IV.imgs.length}"
   obsDelay: -> IV.meta.el.children[1].textContent = it
   obsActive: -> $ IV.meta.el.children[1] .toggle it
+  obsContinuous: -> $ IV.meta.el.children[2] .toggle it
 
   keybinds: ->
     {scrollTo, scrollBy, el} = IV.overlay
 
     esc: IV.rm
-    space: IV.next
-    'shift+space': IV.prev
+    space: ->
+      if IV.continuous and el.scrollTop + el.clientHeight < el.scrollHeight
+        scrollBy 0, +el.clientHeight
+      else
+        IV.next!
+    'shift+space': ->
+      if IV.continuous and el.scrollTop > 0
+        scrollBy 0, -el.clientHeight
+      else
+        IV.prev!
+    c: -> ! = IV.continuous
     G: -> scrollTo el.scrollLeft, el.scrollHeight
     g: -> scrollTo el.scrollLeft, 0
     'F \'': -> IV.zoom -1
@@ -108,8 +121,10 @@ IV =
       width * scale | 0
     else width
 
+    /*
     unless img.dirty
       img.el.width = img.minWidth
+    */
 
   next: -> IV.delta +1
   prev: -> IV.delta -1
@@ -120,6 +135,12 @@ IV =
     IV.img = IV.imgs[IV.index]
     IV.resize!
     $el.replace IV.img.el
+
+    if IV.continuous
+      if it > 0
+        IV.overlay.scrollTo IV.overlay.el.scrollLeft, 0
+      else
+        IV.overlay.scrollTo IV.overlay.el.scrollLeft, IV.overlay.el.scrollHeight
 
   wheel: (e) ->
     sign = if e.deltaY < 0 then +1 else -1

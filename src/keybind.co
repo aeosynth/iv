@@ -27,6 +27,8 @@ Kb <<<<
     seq.push key
     seq .= join \+
 
-    Kb.map[seq]?!
+    if Kb.map[seq]
+      e.preventDefault!
+      that!
 
 module.exports = Kb

@@ -8,12 +8,12 @@ Kb = (map) ->
   for str, cb in map
     for key of str / ' '
       Kb.map[key] = cb
-  window.addEventListener \keydown Kb.keydown
+  window.addEventListener \keypress Kb.keypress
 
 Kb <<<<
-  rm: -> window.removeEventListener \keydown Kb.keydown
+  rm: -> window.removeEventListener \keypress Kb.keypress
   map: {}
-  keydown: (e) ->
+  keypress: (e) ->
     {which:code} = e
     seq = for <[ alt ctrl meta shift ]>
       & if e[& + \Key]

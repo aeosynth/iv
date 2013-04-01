@@ -65,8 +65,8 @@ IV =
     'shift+space': IV.prev
     G: -> scrollTo el.scrollLeft, el.scrollHeight
     g: -> scrollTo el.scrollLeft, 0
-    F: -> IV.zoom -1
-    f: -> IV.zoom +1
+    'F \'': -> IV.zoom -1
+    'f ;': -> IV.zoom +1
     'H A': -> scrollBy -el.clientHeight, 0
     'J S': -> scrollBy 0, +el.clientHeight
     'K W': -> scrollBy 0, -el.clientHeight

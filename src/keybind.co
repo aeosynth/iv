@@ -8,16 +8,26 @@ Kb = (map) ->
   for str, cb in map
     for key of str / ' '
       Kb.map[key] = cb
+  #XXX special keys (eg esc, backspace) don't emit `keypress`
+  # `charCode` is 0 except in `keypress`
+  # `keyCode` is not unicode
+  window.addEventListener \keydown  Kb.keydown
   window.addEventListener \keypress Kb.keypress
 
 Kb <<<<
-  rm: -> window.removeEventListener \keypress Kb.keypress
+  rm: ->
+    window.removeEventListener \keydown  Kb.keydown
+    window.removeEventListener \keypress Kb.keypress
   map: {}
-  keypress: (e) ->
+  keydown:  -> Kb.key it, true
+  keypress: -> Kb.key it, false
+  key: (e, special) ->
     {which:code} = e
     seq = for <[ alt ctrl meta shift ]>
       & if e[& + \Key]
-    unless key = map[code]
+    if special
+      key = map[code]
+    else
       key = String.fromCharCode code
       if 65 <= code <= 90 # A Z
         if e.shiftKey

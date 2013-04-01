@@ -29,11 +29,8 @@ Kb <<<<
       key = map[code]
     else
       key = String.fromCharCode code
-      if 65 <= code <= 90 # A Z
-        if e.shiftKey
-          seq.pop!
-        else
-          key .= toLowerCase!
+      if e.shiftKey
+        seq.pop!
     seq.push key
     seq .= join \+
 

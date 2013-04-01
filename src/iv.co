@@ -202,6 +202,15 @@ IV =
       &off \mouseup   IV.dragend
 
   css: '''
+  ::-webkit-scrollbar {
+    height: 1px;
+    width:  1px;
+    background-color: black;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: white;
+  }
+
   body {
     overflow: hidden;
   }

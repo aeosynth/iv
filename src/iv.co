@@ -42,7 +42,7 @@ IV =
     observe IV, \index       IV.obsIndex
     observe IV, \slideDelay  IV.obsDelay
     observe IV, \slideActive IV.obsActive
-    observe IV, \continuous  IV.obsContinuous
+    observe IV, \continuous  IV.obsCont
     IV.index = index
     IV.slideDelay = 3e3
     IV.slideActive = false
@@ -60,10 +60,10 @@ IV =
         IV.keyMap[key] = cb
     K IV.keyCB
 
-  obsIndex:      -> IV.meta.el.children.0.textContent = "#{it+1}/#{IV.imgs.length}"
-  obsDelay:      -> IV.meta.el.children.1.textContent = it
-  obsActive:     -> IV.meta.el.children.1.hidden = !it
-  obsContinuous: -> IV.meta.el.children.2.hidden = !it
+  obsIndex:  -> IV.meta.el.children.0.textContent = "#{it+1}/#{IV.imgs.length}"
+  obsDelay:  -> IV.meta.el.children.1.textContent = it
+  obsActive: -> IV.meta.el.children.1.hidden = !it
+  obsCont:   -> IV.meta.el.children.2.hidden = !it
 
   keyMap: {}
 

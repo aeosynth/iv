@@ -9,18 +9,18 @@ map =
   39: \right
   40: \down
 
-K = (K.cb, K.el || document) ->
-  # XXX special keys (eg esc, backspace) don't emit `keypress`
+K = !(K.cb) ->
+  # XXX control characters (eg esc, backspace) don't emit `keypress`
   # `charCode` is 0 except in `keypress`
   # `keyCode` is not unicode
-  K.el.addEventListener \keydown  K.key
-  K.el.addEventListener \keypress K.key
+  document.addEventListener \keydown  K.key
+  document.addEventListener \keypress K.key
 
 K <<<<
-  rm: ->
-    K.el.removeEventListener \keydown  K.key
-    K.el.removeEventListener \keypress K.key
-  key: (e) ->
+  off: !->
+    document.removeEventListener \keydown  K.key
+    document.removeEventListener \keypress K.key
+  key: !(e) ->
     {which:code} = e
     keys = for <[ alt ctrl meta ]>
       & if e[& + \Key]

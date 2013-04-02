@@ -119,7 +119,7 @@ IV =
     IV.overlay.rm!
     IV.stylesheet.rm!
     $ window .off \resize  IV.resize
-    K.rm!
+    K.off!
     if IV.slideActive
       clearInterval IV.slideIntervalId
 

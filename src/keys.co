@@ -9,17 +9,17 @@ map =
   39: \right
   40: \down
 
-K = !(K.cb) ->
+K = !(K.cb, el or document) ->
   # XXX control characters (eg esc, backspace) don't emit `keypress`
   # `charCode` is 0 except in `keypress`
   # `keyCode` is not unicode
-  document.addEventListener \keydown  K.key
-  document.addEventListener \keypress K.key
+  el.addEventListener \keydown  K.key
+  el.addEventListener \keypress K.key
 
 K <<<<
-  off: !->
-    document.removeEventListener \keydown  K.key
-    document.removeEventListener \keypress K.key
+  off: !(el or document) ->
+    el.removeEventListener \keydown  K.key
+    el.removeEventListener \keypress K.key
   key: !(e) ->
     {which:code} = e
     keys = for <[ alt ctrl meta ]>

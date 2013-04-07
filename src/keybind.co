@@ -1,0 +1,19 @@
+keychord = require \keychord
+chordmap = {}
+
+CB = (e) ->
+  e.stopPropagation! # prevent other keybinds
+  chord = keychord e
+  if chordmap[chord]
+    e.preventDefault!
+    that!
+
+keybind = (map, el) ->
+  for str, cb in map
+    for chord of str / ' '
+      chordmap[chord] = cb
+
+  el.addEventListener \keydown  CB
+  el.addEventListener \keypress CB
+
+module.exports = keybind

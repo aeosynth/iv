@@ -1,7 +1,7 @@
 log = console~log
 
 $ = require \$
-K = require \keys
+keybind = require \keybind
 doc = document.documentElement
 
 observe = !(obj, key, cb) ->
@@ -15,7 +15,7 @@ IV =
   init: (urls, {index || 0, wheel || false}={}) ->
     IV.stylesheet = $ "<style>#{IV.css}</style>"
       &addTo document.head
-    IV.overlay = $ '<div id="iv">'
+    IV.overlay = $ '<div id="iv" tabindex="0">'
       &on \mousedown  IV.dragstart
       &on \click      IV.click
       &addTo document.body
@@ -55,22 +55,13 @@ IV =
 
     $ window .on \resize  IV.resize
 
-    for str, cb in IV.keybinds!
-      for key of str / ' '
-        IV.keyMap[key] = cb
-    K IV.keyCB
+    keybind IV.keybinds!, IV.overlay.el
+    IV.overlay.el.focus!
 
   obsIndex:  -> IV.meta.el.children.0.textContent = "#{it+1}/#{IV.imgs.length}"
   obsDelay:  -> IV.meta.el.children.1.textContent = it
   obsActive: -> IV.meta.el.children.1.hidden = !it
   obsCont:   -> IV.meta.el.children.2.hidden = !it
-
-  keyMap: {}
-
-  keyCB: (e) ->
-    if IV.keyMap[e.keys]
-      e.preventDefault!
-      that!
 
   keybinds: ->
     {scrollTo, scrollBy, el} = IV.overlay
@@ -119,7 +110,6 @@ IV =
     IV.overlay.rm!
     IV.stylesheet.rm!
     $ window .off \resize  IV.resize
-    K.off!
     if IV.slideActive
       clearInterval IV.slideIntervalId
 

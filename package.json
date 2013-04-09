@@ -1,0 +1,15 @@
+{
+  "name": "iv",
+  "version": "0.0.0",
+  "description": "image viewer",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/aeosynth/iv.git"
+  },
+  "author": "James Campos <james.r.campos@gmail.com>",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "keychord": "aeosynth/keychord"
+  }
+}

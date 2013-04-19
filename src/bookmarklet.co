@@ -13,6 +13,8 @@ if /^http/.test str
     left + i + right
 
 else
-  urls = $$ str .pluck \href
+  els = $$ str
+  attr = if els.els.0.tagName is \A then \href else \src
+  urls = els.pluck attr
 
 iv urls

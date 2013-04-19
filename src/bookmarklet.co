@@ -1,12 +1,18 @@
 $$ = require \$$
 iv = require \iv
 
-key = \aeos.iv-alpha.selector
-selector = localStorage[key] or ''
-selector = prompt \selector, selector
-localStorage[key] = selector
+key = \aeos.iv-alpha.str
+str = localStorage[key] or ''
+str = prompt 'extract or generate urls', str
+localStorage[key] = str
 
-urls = $$ selector
-  .pluck \href
+if /^http/.test str
+  [_, left, start, stop, right] = str.match /(.+)`(\d+)-(\d+)`(.+)/
+
+  urls = for i from start to stop
+    left + i + right
+
+else
+  urls = $$ str .pluck \href
 
 iv urls
